@@ -1,0 +1,101 @@
+---
+title: "#Evaluation of different assembly strategies implementend the PATRIC Bioinformatic resource center"
+author: "Juan Pablo Rojas-Sossa"
+date: "April 25, 2018"
+output: html_document
+---
+# Introduction
+
+The actual approach used on PATRIC is a selection of one this method, and later obtain and output as explain the Figure 1. PATRIC allows the use of different strategies to assembly a set of reads. This project will be focus in five of the methods: auto, fast and full spades, Miseq, Smart-short reads.
+
+![**Figure 1**. Assembly's strategies in PATRIC BRC.](Patric_picture_1.png)
+
+In Auto and Full spades, there is an preprocessing step using the algorithm BayesHammer (Nikolenko, Alekseyev, Korobeynikov, & Alekseyev, 2013), this tool is an error correction  on non-uniform coverage base in integration of Hamming graphs and Bayesian clustering also called machine learning classification. This step is not use in the fast strategy.
+Later, the different strategies is used the assembly algorithm that produce the graphs. The auto strategy used three different assembly tools (Velvet, Spades, IDBA), this process will give as result three different assemblies and ARAST scoring software selects the best assembly. The fast strategies uses Velvet and MEGAHIT to assembly the raw reads and then use ARAST to score the assembly and output the best assembly. Finally, full strategy uses only Spades to make the assembly and output just one assembly.
+
+The objective will be compare 5 de novo assembly strategies (Auto, Fast and Full spades) and later make an alignment with a finished genome. The final step will be compare the results of assemblies with a reference genome assembly and see the effect of the computing efficiency and scoring the real value. Using the different database like JGI database will be necessary to found one-finished genomes, and then make a reference alignment using this finished one and using SAM software to make a mapping alignment and later make comparison between methods. 
+
+The main goal of the project is to deliver best data assembly result to an ongoing data sets provided, this a collaboration project is happening in project that required the data results as the same of being a good benchmarking effort of the PATRIC platform. This data later will be used to a comparative genomics analysis and the addition of phenotypic data that are getting collected, right now. My mentor is fully expect to publish these results in a proper publication.
+This process will be a very important input to Janthinobacterium's project first, later the results will allow to review the PATRIC strategies and will provides a performance comparison between them. We aim to highlight the experimental parameters and the computing preparation of each method and provide explicit guidance for practitioner. 
+
+## Project Goals
+1.	The first step will be make assembly of the five PATRIC's methods.
+2.	Later will be necessary to make an assembly by reference or by mapping using SAM tools.
+3.	Finally, will be necessary analyze the data obtain and make plots and comparisons of the entire benchmarking exercise.
+
+Evaluate the genomic differences between six sets of *Janthinobacterium* strain that shown phenotypic differences. The goals be will include the assembly and analysis the *Janthionobacterium* sequences along with a comparative genomics analysis plus the addition of phenotypic analysis. Because this data is not ready jet to finish the entire project.
+
+## Results
+
+Last week the first results of the assembly were done all the calculation was made on the PATRIC's cloud, the results of the assembly from three of the PATRIC's methods Fast, Full_Spades and Auto. The QUAST 4.6.3 parameters obtain are presented in Figure 2. The bigger number of contigs is the Fast in comparison with Spades_Full and the Auto method. The higher N50 number obtain is the assembly made by the full SPADES, fallow by the Auto. The results obtain for the fast methods are significantly lower.  N50 is the length for which the collection of all contigs of that length or longer covers at least half an assembly. Preliminary showing that the Full spades method is the best assembly obtain from the sequence data.
+
+![alt text](FastQC_picture_1.png)
+
+
+
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(vegan)
+library(phyloseq)
+library (MASS)
+library(ggplot2) 
+library(grid)
+library(gridExtra)
+library(readr)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+Parameters|M1|M2|M3
+----------|-----|-----|-----
+%WW|74|40|7
+%P|19|10|3
+%M|7|50|90
+%TS|2.4|3.1|3.5
+%VS|2.1|2.7|3.0
+C/N|15.0|16.3|16.5
+%Cellulose|16.6A|12.4B|10.8C
+%Hemicellulose|9.7A|6.7B|5.4B
+%Lignin |32.5B|33.8AB|35.8A
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+
+assembly_results <- read_csv("~/Bioinformatics & Computation Biology/Class Project/assembly_results.csv")
+ print(assembly_results)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+p<-ggplot(data=assembly_results, aes(x=Strategies, y=N50)) +
+  geom_bar(stat="identity")
+p
+
+```
+
+
+```{r }
+p2<-ggplot(data=assembly_results, aes(x=Strategies, y=contigs)) +
+  geom_bar(stat="identity")
+p2
+```
+
+
+
+```{r }
+p3<-ggplot(data=assembly_results, aes(x=Strategies, y=Largest_contig)) +
+  geom_bar(stat="identity")
+p3
+```
+
